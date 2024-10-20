@@ -1,6 +1,7 @@
 package com.example.workshop.Presenter.Register;
 
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.workshop.View.Register.IRegisterView;
@@ -10,7 +11,6 @@ import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 import java.util.regex.Pattern;
 
