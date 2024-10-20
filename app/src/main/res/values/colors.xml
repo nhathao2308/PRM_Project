@@ -6,5 +6,6 @@
     <color name="secondary">#AF8F6F</color>
     <color name="brown">#74512D</color>
     <color name="darkbrown">#543310</color>
+    <color name="lightgrey">#F4F4F4</color>
 
 </resources>

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="0dp"
-    android:paddingTop="50dp">
+    android:paddingTop="30dp">
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="582dp"
-        android:layout_marginBottom="80dp" />
+        android:layout_height="match_parent"
+         />
 
     <!-- bottom nav-->
     <com.google.android.material.bottomappbar.BottomAppBar

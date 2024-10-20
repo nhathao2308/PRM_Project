@@ -4,11 +4,36 @@
     android:id="@+id/fragment_ticket"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.TicketFragment">
+    tools:context=".View.Ticket.TicketFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+        android:orientation="vertical"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/ticketTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/cinzel_decorative"
+            android:text="My Ticket"
+            android:textColor="@color/darkbrown"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/noTicket">
+
+        </TextView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ticket_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical" />
+
+
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>

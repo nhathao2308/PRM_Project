@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_workshop_card"
+    android:layout_margin="20dp"
+    app:cardCornerRadius="5dp"
+    android:elevation="4dp"
+    android:backgroundTint="@color/primary"
+
+
+    >
+<RelativeLayout
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!-- Workshop Name -->
+    <TextView
+        android:id="@+id/tk_workshopName"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="LatMQ6qz2SvzbC5THz95"
+        android:textSize="18sp"
+        android:layout_marginRight="10dp"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/tk_workshopName"
+        >
+
+        <TextView
+            android:id="@+id/tk_workshopId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Potery Workshop"
+
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Workshop Location -->
+        <TextView
+            android:id="@+id/tk_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ho Chi Minh"
+            android:textSize="14sp" />
+
+        <!-- Workshop Start Time -->
+        <TextView
+            android:id="@+id/tk_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="31 October 2024 at 15:09:39 UTC+7"
+            android:textSize="14sp" />
+
+        <!-- Workshop Price -->
+        <TextView
+            android:id="@+id/tk_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200000 VND"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tk_status"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+             />
+
+    </LinearLayout>
+</RelativeLayout>
+
+
+
+</androidx.cardview.widget.CardView>

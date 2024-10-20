@@ -72,9 +72,21 @@ dependencies {
     implementation(libs.play.services.safetynet) // Play Services SafetyNet
     implementation (libs.google.recaptcha)
 
-    implementation ("com.google.firebase:firebase-appcheck-playintegrity:17.0.1")
+    // Firebase App Check with Play Integrity
+    implementation(libs.firebase.appcheck.playintegrity)
 
+    // Glide for image loading
+    implementation(libs.glide)
+    testImplementation(libs.junit.junit)
+    annotationProcessor(libs.compiler)
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android) // Kotlin Coroutines for Android
+    // Firebase Firestore for database
+    implementation(libs.firebase.firestore)
+
+    // Kotlin Coroutines for Android (works for Java too)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation (libs.play.services.base)
+
+    // Firebase Storage
+    implementation(libs.firebase.storage)
 }
