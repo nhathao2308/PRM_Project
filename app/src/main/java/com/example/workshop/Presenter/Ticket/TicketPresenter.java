@@ -3,21 +3,24 @@ package com.example.workshop.Presenter.Ticket;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.workshop.Model.Ticket;
 import com.example.workshop.Model.Workshop;
 import com.example.workshop.Presenter.Ticket.ITicketPresenter;
 import com.example.workshop.View.Ticket.ITicketView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,45 +50,47 @@ public class TicketPresenter implements ITicketPresenter {
         currentUserId = user.getUid();
         CollectionReference ticketRef = db.collection("Ticket");
 
+        // Set up a listener to listen for changes in the Ticket collection
         ticketRef.whereEqualTo("UserId", currentUserId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            ticketList.clear(); // Clear old data
-                            if (task.getResult().isEmpty()) {
-                                ticketView.displayTickets(new ArrayList<>()); // Notify no tickets
-                                return;
-                            }
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("TicketPresenter", "Listen failed.", e);
+                            ticketView.displayError("Failed to load tickets: " + e.getMessage());
+                            return;
+                        }
 
-                            // Keep track of how many workshops need to be fetched
-                            int totalWorkshops = task.getResult().size();
-                            if (totalWorkshops == 0) {
-                                ticketView.displayTickets(new ArrayList<>());
-                                return;
-                            }
+                        Log.d("TicketPresenter", "Listener triggered. Snapshot size: " + snapshots.size());
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Get ticket details
-                                String ticketId = document.getId();
-                                int status = document.getLong("Status").intValue();
-                                String userId = document.getString("UserId");
-                                String workshopId = document.getString("WorkshopId");
+                        ticketList.clear(); // Clear old data
+                        if (snapshots == null || snapshots.isEmpty()) {
+                            ticketView.displayTickets(new ArrayList<>()); // Notify no tickets
+                            return;
+                        }
 
-                                // Fetch the workshop associated with this ticket
-                                fetchWorkshop(workshopId, ticketId, status, userId, totalWorkshops);
-                            }
-                        } else {
-                            Log.e("TicketPresenter", "Error getting tickets: ", task.getException());
-                            ticketView.displayError("Failed to load tickets: " + task.getException().getMessage());
+                        // Process each document in the snapshots
+                        int totalWorkshops = snapshots.size();
+                        for (QueryDocumentSnapshot document : snapshots) {
+                            // Get ticket details
+                            String ticketId = document.getId();
+                            int status = document.getLong("Status").intValue();
+                            String userId = document.getString("UserId");
+                            String workshopId = document.getString("WorkshopId");
+
+                            // Log ticket information
+                            Log.d("TicketPresenter", "Fetched Ticket: ID=" + ticketId + ", UserId=" + userId + ", WorkshopId=" + workshopId);
+
+                            // Fetch the workshop associated with this ticket
+                            fetchWorkshop(workshopId, ticketId, status, userId, totalWorkshops);
                         }
                     }
                 });
     }
 
     public void fetchWorkshop(String workshopId, String ticketId, int status, String userId, int totalWorkshops) {
-        // Get the workshop data from "workshops" collection based on workshopId
+        // Get the workshop data from the "workshops" collection based on workshopId
         DocumentReference workshopRef = db.collection("Workshop").document(workshopId);
         workshopRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

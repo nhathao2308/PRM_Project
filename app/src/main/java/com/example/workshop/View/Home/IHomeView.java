@@ -8,5 +8,4 @@ public interface IHomeView {
     void displayWorkshops(List<Workshop> workshops);
     void displayError(String message); // New method for error handling
     void displayWorkshopDetails(Workshop workshop); // New method for displaying workshop details
-
-}
+    void onTicketPurchaseSuccess();}

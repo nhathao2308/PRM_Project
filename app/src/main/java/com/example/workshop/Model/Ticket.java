@@ -16,6 +16,12 @@ public class Ticket {
         this.workshop = workshop;
     }
 
+    public Ticket(int status, String userId, String workshopId) {
+        this.status = status;
+        this.userId = userId;
+        this.workshopId = workshopId;
+    }
+
     public Ticket(String userId, int status, String id, String workshopId) {
         this.userId = userId;
         this.status = status;

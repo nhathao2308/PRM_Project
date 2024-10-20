@@ -78,6 +78,7 @@ dependencies {
     // Glide for image loading
     implementation(libs.glide)
     testImplementation(libs.junit.junit)
+    androidTestImplementation(libs.junit.junit)
     annotationProcessor(libs.compiler)
 
     // Firebase Firestore for database
