@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "93724886455",
+    "firebase_url": "https://androiddemo-f116c-default-rtdb.firebaseio.com",
+    "project_id": "androiddemo-f116c",
+    "storage_bucket": "androiddemo-f116c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93724886455:android:7064351598748071b91432",
+        "android_client_info": {
+          "package_name": "com.example.workshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoGMj-PF9V3IHpTry4cdA6WuyXuRC5Wj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

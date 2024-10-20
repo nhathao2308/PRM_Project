@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="0dp"
+    android:paddingTop="50dp">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="582dp"
+        android:layout_marginBottom="80dp" />
+
+    <!-- bottom nav-->
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
+        android:gravity="bottom"
+        android:paddingVertical="0dp"
+        app:buttonGravity="bottom"
+        app:hideOnScroll="true"
+        app:menuAlignmentMode="auto">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginVertical="20dp"
+            android:background="@color/darkbrown"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            app:activeIndicatorLabelPadding="0dp"
+            app:backgroundTint="@color/darkbrown"
+            app:itemActiveIndicatorStyle="@color/nav_item_icon_tint"
+            app:itemBackground="@drawable/nav_item_background"
+            app:itemIconSize="25dp"
+            app:itemIconTint="@color/nav_item_icon_tint"
+            app:itemTextColor="@color/primary"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/bottom_nav" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+    <!--list-->
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
