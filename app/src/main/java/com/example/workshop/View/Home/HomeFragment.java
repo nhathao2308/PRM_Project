@@ -9,12 +9,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workshop.Model.Workshop;
 import com.example.workshop.Presenter.Workshop.WorkshopPresenter;
 import com.example.workshop.R;
+import com.example.workshop.View.Ticket.TicketFragment;
 import com.google.firebase.FirebaseApp;
 
 import java.util.List;
@@ -41,6 +44,18 @@ public class HomeFragment extends Fragment implements IHomeView {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        presenter.fetchAllWorkshops();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.fetchAllWorkshops();
+    }
+
+    @Override
     public void displayWorkshops(List<Workshop> workshops) {
         workshopAdapter = new WorkshopAdapter(getContext(), workshops);
         workshopRecyclerView.setAdapter(workshopAdapter);
@@ -54,6 +69,11 @@ public class HomeFragment extends Fragment implements IHomeView {
 
     @Override
     public void displayWorkshopDetails(Workshop workshop) {
+
+    }
+
+    @Override
+    public void onTicketPurchaseSuccess() {
 
     }
 }

@@ -51,6 +51,18 @@ public class TicketFragment extends Fragment implements ITicketView {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        ticketPresenter.loadTickets();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ticketPresenter.loadTickets();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null; // Clear binding to avoid memory leaks

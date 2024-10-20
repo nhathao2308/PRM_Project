@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.workshop.Model.Workshop;
 import com.example.workshop.Presenter.Workshop.WorkshopPresenter;
 import com.example.workshop.R;
+import com.example.workshop.View.MainActivity;
+import com.example.workshop.View.Ticket.TicketFragment;
 import com.example.workshop.databinding.WorkshopDetailBinding;
 
 import java.util.List;
@@ -33,6 +37,10 @@ public class WorkshopDetailActivity extends AppCompatActivity implements  IHomeV
         if (workshopId != null) {
             presenter.getWorkshopById(workshopId); // Fetch workshop details
         }
+
+        binding.buttonBuy.setOnClickListener(v -> {
+            presenter.createTicket( workshopId); // Call the method to create a ticket
+        });
     }
 
     @Override
@@ -60,4 +68,15 @@ public class WorkshopDetailActivity extends AppCompatActivity implements  IHomeV
                     .into(binding.workshopImage); // Set the ImageView to display the image
         }
     }
+
+    @Override
+    public void onTicketPurchaseSuccess() {
+        // Start MainActivity and signal to show the TicketFragment
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("show_ticket_fragment", true); // Signal to show TicketFragment
+        startActivity(intent);
+        finish(); // Optionally close WorkshopDetailActivity
+
+    }
+
 }

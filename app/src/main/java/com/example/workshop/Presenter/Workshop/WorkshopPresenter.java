@@ -4,6 +4,8 @@
 
     import androidx.annotation.NonNull;
 
+    import com.example.workshop.Model.CreateTicketModel;
+    import com.example.workshop.Model.Ticket;
     import com.example.workshop.Model.Workshop;
     import com.example.workshop.View.Home.IHomeView;
     import com.google.android.gms.tasks.OnCompleteListener;
@@ -11,6 +13,8 @@
     import com.google.android.gms.tasks.OnSuccessListener;
     import com.google.android.gms.tasks.Task;
     import com.google.firebase.Timestamp;
+    import com.google.firebase.auth.FirebaseAuth;
+    import com.google.firebase.auth.FirebaseUser;
     import com.google.firebase.firestore.CollectionReference;
     import com.google.firebase.firestore.DocumentSnapshot;
     import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,6 +30,9 @@
         private IHomeView homeView;
         private List<Workshop> workshopList;
         private FirebaseFirestore db;
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+       FirebaseUser currentUser = auth.getCurrentUser();
+
 
         public WorkshopPresenter(IHomeView homeViewview) {
             this.homeView = homeViewview;
@@ -142,5 +149,24 @@
                     }
                 }
             });
+        }
+        public void createTicket(String workshopId) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                homeView.displayError("User not logged in.");
+                return;
+            }
+
+           String userId = user.getUid();
+            CreateTicketModel newTicket = new CreateTicketModel(1, userId, workshopId); // Create a new ticket
+
+            db.collection("Ticket") // Your Firestore collection for tickets
+                    .add(newTicket)
+                    .addOnSuccessListener(documentReference -> {
+                        homeView.onTicketPurchaseSuccess(); // Notify the view
+                    })
+                    .addOnFailureListener(e -> {
+                        homeView.displayError("Failed to purchase ticket: " + e.getMessage()); // Handle failure
+                    });
         }
     }
