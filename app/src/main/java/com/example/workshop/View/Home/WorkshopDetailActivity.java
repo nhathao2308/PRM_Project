@@ -37,10 +37,31 @@ public class WorkshopDetailActivity extends AppCompatActivity implements  IHomeV
         if (workshopId != null) {
             presenter.getWorkshopById(workshopId); // Fetch workshop details
         }
+        binding.numberPickerTickets.setMinValue(1);
+        binding.numberPickerTickets.setMaxValue(10);
+        binding.numberPickerTickets.setValue(1);
+        binding.numberPickerTickets.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            if (newVal < 1 || newVal > 10) {
+                Toast.makeText(WorkshopDetailActivity.this, "Number of tickets must be greater than 0 and less than or equal to 10.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         binding.buttonBuy.setOnClickListener(v -> {
-            presenter.createTicket( workshopId); // Call the method to create a ticket
+            // Get the number of tickets from the NumberPicker
+            int numOfTickets = binding.numberPickerTickets.getValue();
+
+            // Calculate total price
+            double ticketPrice = Double.parseDouble(binding.txtPrice.getText().toString());
+            double totalPrice = ticketPrice * numOfTickets;
+
+            // Start PaymentActivity and pass the workshop ID and total price
+            Intent paymentIntent = new Intent(this, PaymentActivity.class);
+            paymentIntent.putExtra("workshop_id", workshopId);
+            paymentIntent.putExtra("number_of_tickets", numOfTickets);
+            paymentIntent.putExtra("total_price", totalPrice); // Pass total price
+            startActivity(paymentIntent);
         });
+
     }
 
     @Override

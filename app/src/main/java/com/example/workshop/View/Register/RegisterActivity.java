@@ -32,6 +32,8 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
             String password = binding.regPassword.getText().toString();
             registerPresenter.onRegisterClicked(email, password);
         });
+
+        binding.buttonLoginBack.setOnClickListener(v -> registerPresenter.onLoginBackClicked());
     }
 
     public void onRegisterSuccess() {
@@ -47,5 +49,11 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
     }
     public Activity getActivity() {
         return this; // Return the current activity
+    }
+
+    @Override
+    public void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

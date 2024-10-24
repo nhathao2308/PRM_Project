@@ -85,6 +85,24 @@
         android:paddingBottom="15dp"
         android:text="Login" />
 
+
+    <Button
+        android:id="@+id/button_login_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/input_password"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="75dp"
+        android:backgroundTint="@color/darkbrown"
+        android:gravity="center"
+        android:paddingLeft="70dp"
+        android:paddingTop="15dp"
+        android:paddingRight="70dp"
+        android:paddingBottom="15dp"
+        android:text="Login with Google" />
+
+
+
     <!-- Not Registered Text -->
 
 

@@ -16,9 +16,11 @@
     import com.google.firebase.auth.FirebaseAuth;
     import com.google.firebase.auth.FirebaseUser;
     import com.google.firebase.firestore.CollectionReference;
+    import com.google.firebase.firestore.DocumentReference;
     import com.google.firebase.firestore.DocumentSnapshot;
     import com.google.firebase.firestore.FirebaseFirestore;
     import com.google.firebase.firestore.QuerySnapshot;
+    import com.google.firebase.firestore.WriteBatch;
     import com.google.firebase.storage.FirebaseStorage;
     import com.google.firebase.storage.StorageReference;
 
@@ -150,23 +152,31 @@
                 }
             });
         }
-        public void createTicket(String workshopId) {
+        public void createTicket(String workshopId, int numOfTicket) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 homeView.displayError("User not logged in.");
                 return;
             }
 
-           String userId = user.getUid();
-            CreateTicketModel newTicket = new CreateTicketModel(1, userId, workshopId); // Create a new ticket
+            String userId = user.getUid();
 
-            db.collection("Ticket") // Your Firestore collection for tickets
-                    .add(newTicket)
-                    .addOnSuccessListener(documentReference -> {
+            // Use a batch to write multiple tickets
+            WriteBatch batch = db.batch();
+
+            for (int i = 0; i < numOfTicket; i++) {
+                CreateTicketModel newTicket = new CreateTicketModel(1, workshopId, userId); // Create a new ticket
+                DocumentReference ticketRef = db.collection("Ticket").document(); // Generate a new document reference
+                batch.set(ticketRef, newTicket); // Add the ticket to the batch
+            }
+
+            // Commit the batch
+            batch.commit()
+                    .addOnSuccessListener(aVoid -> {
                         homeView.onTicketPurchaseSuccess(); // Notify the view
                     })
                     .addOnFailureListener(e -> {
-                        homeView.displayError("Failed to purchase ticket: " + e.getMessage()); // Handle failure
+                        homeView.displayError("Failed to purchase tickets: " + e.getMessage()); // Handle failure
                     });
         }
     }

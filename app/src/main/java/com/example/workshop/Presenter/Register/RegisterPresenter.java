@@ -54,6 +54,11 @@ public class RegisterPresenter implements IRegisterPresenter {
         createUser(email, password);
     }
 
+    @Override
+    public void onLoginBackClicked() {
+        registerView.navigateToLogin();
+    }
+
     private void createUser(String email, String password) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
