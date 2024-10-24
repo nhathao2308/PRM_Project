@@ -32,8 +32,9 @@ public class HomeFragment extends Fragment implements IHomeView {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+            FirebaseApp.initializeApp(this.getContext());
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+            View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         workshopRecyclerView = view.findViewById(R.id.workshop_recycler_view);
         workshopRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -43,17 +44,8 @@ public class HomeFragment extends Fragment implements IHomeView {
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        presenter.fetchAllWorkshops();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        presenter.fetchAllWorkshops();
-    }
+
 
     @Override
     public void displayWorkshops(List<Workshop> workshops) {

@@ -7,4 +7,6 @@ public interface IRegisterView {
 
     void showErrorMessage(String message);
     Activity getActivity();
+
+    void navigateToLogin();
 }

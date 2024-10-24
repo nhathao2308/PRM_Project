@@ -18,6 +18,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MemoryCacheSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -31,13 +33,16 @@ public class TicketPresenter implements ITicketPresenter {
     private List<Ticket> ticketList;
     private FirebaseFirestore db;
     private String currentUserId;  // Current logged-in user ID
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = auth.getCurrentUser();
 
     public TicketPresenter(ITicketView ticketView) {
         this.ticketView = ticketView;
         this.db = FirebaseFirestore.getInstance();  // Initialize Firestore
-        this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.ticketList = new ArrayList<>();
+
     }
+
 
     @Override
     public void loadTickets() {
@@ -48,36 +53,27 @@ public class TicketPresenter implements ITicketPresenter {
         }
 
         currentUserId = user.getUid();
+
+        Log.d("TicketPresenter", "Attempting to load tickets for user: " + currentUserId);
+
         CollectionReference ticketRef = db.collection("Ticket");
-
-        // Set up a listener to listen for changes in the Ticket collection
-        ticketRef.whereEqualTo("UserId", currentUserId)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot snapshots,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w("TicketPresenter", "Listen failed.", e);
-                            ticketView.displayError("Failed to load tickets: " + e.getMessage());
-                            return;
-                        }
-
-                        Log.d("TicketPresenter", "Listener triggered. Snapshot size: " + snapshots.size());
-
+        ticketRef.whereEqualTo("userId", currentUserId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Log.d("TicketPresenter", "Task completed.");
+                if (task.isSuccessful()) {
+                    QuerySnapshot snapshots = task.getResult();
+                    Log.d("TicketPresenter", "Snapshots: " + (snapshots != null ? snapshots.size() : 0));
+                    if (snapshots != null && !snapshots.isEmpty()) {
                         ticketList.clear(); // Clear old data
-                        if (snapshots == null || snapshots.isEmpty()) {
-                            ticketView.displayTickets(new ArrayList<>()); // Notify no tickets
-                            return;
-                        }
 
-                        // Process each document in the snapshots
                         int totalWorkshops = snapshots.size();
                         for (QueryDocumentSnapshot document : snapshots) {
                             // Get ticket details
                             String ticketId = document.getId();
-                            int status = document.getLong("Status").intValue();
-                            String userId = document.getString("UserId");
-                            String workshopId = document.getString("WorkshopId");
+                            int status = document.getLong("status").intValue();
+                            String userId = document.getString("userId");
+                            String workshopId = document.getString("workshopId");
 
                             // Log ticket information
                             Log.d("TicketPresenter", "Fetched Ticket: ID=" + ticketId + ", UserId=" + userId + ", WorkshopId=" + workshopId);
@@ -85,8 +81,17 @@ public class TicketPresenter implements ITicketPresenter {
                             // Fetch the workshop associated with this ticket
                             fetchWorkshop(workshopId, ticketId, status, userId, totalWorkshops);
                         }
+                    } else {
+                        // No tickets found
+                        ticketView.displayTickets(new ArrayList<>()); // Notify no tickets
                     }
-                });
+                } else {
+                    // Task failed, handle error
+                    ticketView.displayError("Failed to load tickets: " + task.getException().getMessage());
+                }
+            }
+        });
+
     }
 
     public void fetchWorkshop(String workshopId, String ticketId, int status, String userId, int totalWorkshops) {

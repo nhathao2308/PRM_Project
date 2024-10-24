@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.workshop.Model.Ticket;
 import com.example.workshop.Presenter.Ticket.ITicketPresenter;
 import com.example.workshop.Presenter.Ticket.TicketPresenter;
+import com.example.workshop.View.Home.WorkshopAdapter;
 import com.example.workshop.databinding.FragmentTicketBinding;
 import com.google.firebase.FirebaseApp;
 
@@ -40,7 +41,7 @@ public class TicketFragment extends Fragment implements ITicketView {
         ticketPresenter = new TicketPresenter(this);
 
         // Set up RecyclerView with an empty list initially
-        ticketAdapter = new TicketAdapter(new ArrayList<>());
+        ticketAdapter = new TicketAdapter(getContext(),new ArrayList<>());
         binding.ticketRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.ticketRecyclerView.setAdapter(ticketAdapter);
 
@@ -50,17 +51,7 @@ public class TicketFragment extends Fragment implements ITicketView {
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        ticketPresenter.loadTickets();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ticketPresenter.loadTickets();
-    }
 
     @Override
     public void onDestroyView() {
@@ -71,19 +62,14 @@ public class TicketFragment extends Fragment implements ITicketView {
     @Override
     public void displayTickets(List<Ticket> tickets) {
         if (tickets.isEmpty()) {
-            // Show "no tickets" message if the list is empty
             binding.ticketRecyclerView.setVisibility(View.GONE);
             binding.noTicket.setVisibility(View.VISIBLE);
             binding.noTicket.setText("You have no tickets");
         } else {
-            // Update adapter data and notify the RecyclerView
             binding.noTicket.setVisibility(View.GONE);
             binding.ticketRecyclerView.setVisibility(View.VISIBLE);
+            ticketAdapter.updateTickets(tickets); // Update existing adapter instead of recreating
 
-            // Update adapter data
-            ticketAdapter = new TicketAdapter(tickets);
-            binding.ticketRecyclerView.setAdapter(ticketAdapter);
-            ticketAdapter.notifyDataSetChanged();  // Notify that data has changed
         }
     }
 

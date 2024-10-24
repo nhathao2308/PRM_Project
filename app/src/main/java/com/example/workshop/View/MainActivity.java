@@ -10,6 +10,7 @@ import com.example.workshop.Presenter.NavbarPresenter;
 import com.example.workshop.R;
 import com.example.workshop.View.Ticket.TicketFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity implements INavbarView {
     private NavbarPresenter navbarPresenter;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity implements INavbarView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 

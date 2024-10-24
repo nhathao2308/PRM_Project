@@ -177,16 +177,30 @@
         android:lineSpacingExtra="4dp" />
 
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    >
+
+    <NumberPicker
+        android:id="@+id/number_picker_tickets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:value="1" />
 
     <Button
         android:id="@+id/button_buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/darkbrown"
         android:gravity="center"
-        android:layout_gravity="center"
         android:paddingLeft="40dp"
         android:paddingTop="15dp"
         android:paddingRight="40dp"
@@ -194,5 +208,7 @@
         android:text="Buy ticket"
 
         />
+</LinearLayout>
+
 </LinearLayout>
 </androidx.core.widget.NestedScrollView>

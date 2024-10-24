@@ -1,5 +1,6 @@
 package com.example.workshop.View.Ticket;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -16,10 +17,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketViewHolder> {
-    private final List<Ticket> ticketList;
+    private List<Ticket> ticketList;
+    private Context context;
 
-    public TicketAdapter(List<Ticket> ticketList) {
+    public TicketAdapter(Context context,List<Ticket> ticketList) {
         this.ticketList = ticketList;
+        this.context = context;
+    }
+
+    public void updateTickets(List<Ticket> newTickets) {
+        this.ticketList = newTickets;
+        notifyDataSetChanged();  // Notify RecyclerView that data has changed
     }
 
     @NonNull
@@ -50,10 +58,8 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
 
         public void bind(Ticket ticket) {
             Workshop workshop = ticket.getWorkshop();
-
-            // Set workshop details
             binding.tkWorkshopName.setText(workshop.getName());
-            binding.tkWorkshopId.setText(ticket.getId()); // Use ticket ID instead of workshop ID
+            binding.tkWorkshopId.setText(ticket.getId()); // Use ticket ID
             binding.tkLocation.setText(workshop.getLocation());
 
             // Format and set the start time
@@ -61,10 +67,9 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             String formattedStartTime = dateFormat.format(workshop.getStartTime());
             binding.tkStartTime.setText(formattedStartTime);
 
-            // Set the price as a string
             binding.tkPrice.setText(String.format(Locale.getDefault(), "%d VND", workshop.getPrice()));
 
-            // Update the status view based on ticket status
+            // Update the status view
             updateStatusView(ticket);
         }
 
@@ -74,13 +79,12 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
 
             if (ticket.getStatus() == 1) {
                 statusText = "Processing";
-                statusColor = Color.GREEN;  // Set color to green
+                statusColor = Color.GREEN;
             } else {
                 statusText = "Used";
-                statusColor = Color.RED;  // Set color to red
+                statusColor = Color.RED;
             }
 
-            // Update the status TextView
             binding.tkStatus.setText(statusText);
             binding.tkStatus.setTextColor(statusColor);
         }
