@@ -68,13 +68,23 @@
         android:textColorHint="#546E7A"
 
         />
+    <Button
+        android:id="@+id/regBtnCaptureFace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reg_password"
 
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/primary"
+        android:gravity="center"
+        android:text="Register face"
+        android:textColor="@color/darkbrown" />
     <!-- Login Button -->
     <Button
         android:id="@+id/reg_btnSignup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/reg_password"
+        android:layout_below="@+id/regBtnCaptureFace"
         android:layout_centerInParent="true"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/darkbrown"
@@ -91,7 +101,7 @@
         android:id="@+id/button_loginBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button_forgetPwd"
+        android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/primary"
@@ -101,17 +111,7 @@
 
     <!-- Sign-up Button -->
 
-    <Button
-        android:id="@+id/button_forgetPwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
 
-        android:backgroundTint="@color/primary"
-        android:gravity="center"
-        android:text="Forgot password"
-        android:textColor="@color/darkbrown" />
 
 
 </RelativeLayout>

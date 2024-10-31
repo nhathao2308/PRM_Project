@@ -1,182 +1,265 @@
-    package com.example.workshop.Presenter.Workshop;
+package com.example.workshop.Presenter.Workshop;
 
-    import android.net.Uri;
+import android.net.Uri;
 
-    import androidx.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-    import com.example.workshop.Model.CreateTicketModel;
-    import com.example.workshop.Model.Ticket;
-    import com.example.workshop.Model.Workshop;
-    import com.example.workshop.View.Home.IHomeView;
-    import com.google.android.gms.tasks.OnCompleteListener;
-    import com.google.android.gms.tasks.OnFailureListener;
-    import com.google.android.gms.tasks.OnSuccessListener;
-    import com.google.android.gms.tasks.Task;
-    import com.google.firebase.Timestamp;
-    import com.google.firebase.auth.FirebaseAuth;
-    import com.google.firebase.auth.FirebaseUser;
-    import com.google.firebase.firestore.CollectionReference;
-    import com.google.firebase.firestore.DocumentReference;
-    import com.google.firebase.firestore.DocumentSnapshot;
-    import com.google.firebase.firestore.FirebaseFirestore;
-    import com.google.firebase.firestore.QuerySnapshot;
-    import com.google.firebase.firestore.WriteBatch;
-    import com.google.firebase.storage.FirebaseStorage;
-    import com.google.firebase.storage.StorageReference;
+import com.example.workshop.Model.CreateTicketModel;
+import com.example.workshop.Model.CreateWorkshopModel;
+import com.example.workshop.Model.Ticket;
+import com.example.workshop.Model.Workshop;
+import com.example.workshop.View.Admin.IAdminView;
+import com.example.workshop.View.Home.IHomeView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-    import java.util.ArrayList;
-    import java.util.Date;
-    import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-    public class WorkshopPresenter implements  IWorkshopPresenter {
-        private IHomeView homeView;
-        private List<Workshop> workshopList;
-        private FirebaseFirestore db;
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-       FirebaseUser currentUser = auth.getCurrentUser();
+public class WorkshopPresenter implements IWorkshopPresenter {
+    private IHomeView homeView;
+    private IAdminView adminView; // For admin functionalities
+    private List<Workshop> workshopList;
+    private FirebaseFirestore db;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = auth.getCurrentUser();
 
+    public WorkshopPresenter(IHomeView homeView) {
+        this.homeView = homeView;
+        this.workshopList = new ArrayList<>();
+        this.db = FirebaseFirestore.getInstance();
+    }
 
-        public WorkshopPresenter(IHomeView homeViewview) {
-            this.homeView = homeViewview;
-            this.workshopList = new ArrayList<>();
-            this.db = FirebaseFirestore.getInstance();
-        }
+    public WorkshopPresenter(IAdminView adminView) {
+        this.adminView = adminView;
+        this.workshopList = new ArrayList<>();
+        this.db = FirebaseFirestore.getInstance();
+    }
 
+    @Override
+    public void fetchAllWorkshops() {
+        CollectionReference workshopsRef = db.collection("Workshop"); // Your Firestore collection
 
-        @Override
-        public void fetchAllWorkshops() {
-            CollectionReference workshopsRef = db.collection("Workshop"); // Your Firestore collection
+        workshopsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    workshopList.clear(); // Clear the list to avoid duplication
+                    for (DocumentSnapshot document : task.getResult()) {
+                        String id = document.getId();
+                        String name = document.getString("Name");
+                        String location = document.getString("Location");
 
-            workshopsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        workshopList.clear(); // Clear the list to avoid duplication
-                        for (DocumentSnapshot document : task.getResult()) {
-                            String id = document.getId();
-                            String name = document.getString("Name");
-                            String location = document.getString("Location");
-                            int price = document.getLong("Price").intValue();
-                            Timestamp startTimeTimestamp = document.getTimestamp("StartTime");
-                            Timestamp endTimeTimestamp = document.getTimestamp("EndTime");
-                            Date startTime = startTimeTimestamp != null ? startTimeTimestamp.toDate() : null;
-                            Date endTime = endTimeTimestamp != null ? endTimeTimestamp.toDate() : null;
-                            String imageUrl = document.getString("Image");
-                            String description = document.getString("Description");
-                            int capacity = document.getLong("Capacity").intValue();
-                            int sold = document.getLong("Sold").intValue();
+                        // Handle potential null values for int fields with a default of 0
+                        Long priceLong = document.getLong("Price");
+                        int price = priceLong != null ? priceLong.intValue() : 0;
 
-                            // Create a new Workshop object with mapped values
-                            Workshop workshop = new Workshop(id, name, location, price, startTime, endTime, imageUrl, description, capacity, sold);// Map Firestore doc to Workshop
+                        Timestamp startTimeTimestamp = document.getTimestamp("StartTime");
+                        Timestamp endTimeTimestamp = document.getTimestamp("EndTime");
+                        Date startTime = startTimeTimestamp != null ? startTimeTimestamp.toDate() : null;
+                        Date endTime = endTimeTimestamp != null ? endTimeTimestamp.toDate() : null;
+                        String imageUrl = document.getString("Image");
+                        String description = document.getString("Description");
 
-                            // Get the download URL for the image
-                            assert workshop != null;
-                            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(workshop.getImageUrl());
-                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    workshop.setImageUrl(uri.toString()); // Update the Workshop object with the download URL
-                                    workshopList.add(workshop); // Add workshop to the list
+                        Long capacityLong = document.getLong("Capacity");
+                        int capacity = capacityLong != null ? capacityLong.intValue() : 0;
 
-                                    // Check if this is the last workshop to add
-                                    if (workshopList.size() == task.getResult().size()) {
+                        Long soldLong = document.getLong("Sold");
+                        int sold = soldLong != null ? soldLong.intValue() : 0;
+
+                        // Create a new Workshop object with mapped values
+                        Workshop workshop = new Workshop(id, name, location, price, startTime, endTime, imageUrl, description, capacity, sold);
+
+                        // Get the download URL for the image
+                        assert workshop != null;
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(workshop.getImageUrl());
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                workshop.setImageUrl(uri.toString()); // Update the Workshop object with the download URL
+                                workshopList.add(workshop); // Add workshop to the list
+
+                                // Check if this is the last workshop to add
+                                if (workshopList.size() == task.getResult().size()) {
+                                    if (homeView != null) {
                                         homeView.displayWorkshops(workshopList); // Update the view
-                                        homeView.displayError("Fetch Successfully");
+                                    }
+                                    if (adminView != null) {
+                                        adminView.displayWorkshops(workshopList); // Update the admin view as well
                                     }
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle any errors
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                                if (homeView != null) {
                                     homeView.displayError(exception.getMessage());
                                 }
-                            });
-                        }
-                    } else {
-                        // Handle the error
+                                if (adminView != null) {
+                                    adminView.displayError(exception.getMessage());
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    // Handle the error
+                    if (homeView != null) {
                         homeView.displayError(task.getException().getMessage());
                     }
+                    if (adminView != null) {
+                        adminView.displayError(task.getException().getMessage());
+                    }
                 }
-            });
-        }
+            }
+        });
+    }
 
+    @Override
+    public void getWorkshopById(String workshopId) {
+        db.collection("Workshop").document(workshopId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String id = document.getId();
+                        String name = document.getString("Name");
+                        String location = document.getString("Location");
+                        int price = document.getLong("Price").intValue();
+                        Timestamp startTimeTimestamp = document.getTimestamp("StartTime");
+                        Timestamp endTimeTimestamp = document.getTimestamp("EndTime");
+                        Date startTime = startTimeTimestamp != null ? startTimeTimestamp.toDate() : null;
+                        Date endTime = endTimeTimestamp != null ? endTimeTimestamp.toDate() : null;
+                        String imageUrl = document.getString("Image");
+                        String description = document.getString("Description");
+                        int capacity = document.getLong("Capacity").intValue();
+                        int sold = document.getLong("Sold").intValue();
 
-        @Override
-        public void getWorkshopById(String workshopId) {
-            db.collection("Workshop").document(workshopId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            String id = document.getId();
-                            String name = document.getString("Name");
-                            String location = document.getString("Location");
-                            int price = document.getLong("Price").intValue();
-                            Timestamp startTimeTimestamp = document.getTimestamp("StartTime");
-                            Timestamp endTimeTimestamp = document.getTimestamp("EndTime");
-                            Date startTime = startTimeTimestamp != null ? startTimeTimestamp.toDate() : null;
-                            Date endTime = endTimeTimestamp != null ? endTimeTimestamp.toDate() : null;
-                            String imageUrl = document.getString("Image");
-                            String description = document.getString("Description");
-                            int capacity = document.getLong("Capacity").intValue();
-                            int sold = document.getLong("Sold").intValue();
+                        // Create a new Workshop object with mapped values
+                        Workshop workshop = new Workshop(id, name, location, price, startTime, endTime, imageUrl, description, capacity, sold);
 
-                            // Create a new Workshop object with mapped values
-                            Workshop workshop = new Workshop(id, name, location, price, startTime, endTime, imageUrl, description, capacity, sold);// Map Firestore doc to Workshop
-
-                            // Get the download URL for the image
-                            assert workshop != null;
-                            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(workshop.getImageUrl());
-                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    workshop.setImageUrl(uri.toString()); // Update the Workshop object with the download URL
+                        // Get the download URL for the image
+                        assert workshop != null;
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(workshop.getImageUrl());
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                workshop.setImageUrl(uri.toString()); // Update the Workshop object with the download URL
+                                if (homeView != null) {
                                     homeView.displayWorkshopDetails(workshop);  // Display details in the view
-
-
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle any errors
+                                if (adminView != null) {
+                                    adminView.displayWorkshopDetails(workshop);  // Display details in the admin view
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                                if (homeView != null) {
                                     homeView.displayError(exception.getMessage());
                                 }
-                            });
-                        } else {
+                                if (adminView != null) {
+                                    adminView.displayError(exception.getMessage());
+                                }
+                            }
+                        });
+                    } else {
+                        if (homeView != null) {
                             homeView.displayError("Workshop not found");
                         }
-                    } else {
+                        if (adminView != null) {
+                            adminView.displayError("Workshop not found");
+                        }
+                    }
+                } else {
+                    if (homeView != null) {
                         homeView.displayError(task.getException().getMessage());
                     }
+                    if (adminView != null) {
+                        adminView.displayError(task.getException().getMessage());
+                    }
                 }
-            });
-        }
-        public void createTicket(String workshopId, int numOfTicket) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                homeView.displayError("User not logged in.");
-                return;
             }
-
-            String userId = user.getUid();
-
-            // Use a batch to write multiple tickets
-            WriteBatch batch = db.batch();
-
-            for (int i = 0; i < numOfTicket; i++) {
-                CreateTicketModel newTicket = new CreateTicketModel(1, workshopId, userId); // Create a new ticket
-                DocumentReference ticketRef = db.collection("Ticket").document(); // Generate a new document reference
-                batch.set(ticketRef, newTicket); // Add the ticket to the batch
-            }
-
-            // Commit the batch
-            batch.commit()
-                    .addOnSuccessListener(aVoid -> {
-                        homeView.onTicketPurchaseSuccess(); // Notify the view
-                    })
-                    .addOnFailureListener(e -> {
-                        homeView.displayError("Failed to purchase tickets: " + e.getMessage()); // Handle failure
-                    });
-        }
+        });
     }
+
+    public void createTicket(String workshopId, int numOfTicket) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            homeView.displayError("User not logged in.");
+            return;
+        }
+
+        String userId = user.getUid();
+
+        // Use a batch to write multiple tickets
+        WriteBatch batch = db.batch();
+
+        for (int i = 0; i < numOfTicket; i++) {
+            CreateTicketModel newTicket = new CreateTicketModel(1, workshopId, userId); // Create a new ticket
+            DocumentReference ticketRef = db.collection("Ticket").document(); // Generate a new document reference
+            batch.set(ticketRef, newTicket); // Add the ticket to the batch
+        }
+
+        // Commit the batch
+        batch.commit()
+                .addOnSuccessListener(aVoid -> {
+                    homeView.onTicketPurchaseSuccess(); // Notify the view
+                })
+                .addOnFailureListener(e -> {
+                    homeView.displayError("Failed to purchase tickets: " + e.getMessage()); // Handle failure
+                });
+    }
+
+    // Method to create a new workshop
+    public void createWorkshop(CreateWorkshopModel workshop) {
+        DocumentReference newWorkshopRef = db.collection("Workshop").document(); // Create a new document reference
+
+        // Set the workshop data
+        newWorkshopRef.set(workshop).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                if (adminView != null) {
+                    adminView.onWorkshopCreatedSuccess(); // Notify admin view
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (adminView != null) {
+                    adminView.displayError("Failed to create workshop: " + e.getMessage()); // Handle failure
+                }
+            }
+        });
+    }
+    public void updateWorkshop(String workshopId, CreateWorkshopModel updatedWorkshop) {
+        DocumentReference workshopRef = db.collection("Workshop").document(workshopId); // Reference to the workshop
+
+        workshopRef.set(updatedWorkshop).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                adminView.onWorkshopUpdateSuccess(); // Notify admin view of successful update
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                adminView.displayError("Failed to update workshop: " + e.getMessage());
+            }
+        });
+    }}

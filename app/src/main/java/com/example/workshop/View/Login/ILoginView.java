@@ -4,5 +4,6 @@ public interface ILoginView {
     void navigateToRegister();
     void onLoginSuccess();
     void showErrorMessage(String message);
+    void adminLogin();
 
 }

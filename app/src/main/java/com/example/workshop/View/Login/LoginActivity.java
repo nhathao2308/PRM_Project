@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.workshop.Presenter.Login.LoginPresenter;
 import com.example.workshop.R;
+import com.example.workshop.View.Admin.AdminActivity;
 import com.example.workshop.View.MainActivity;
 import com.example.workshop.View.Register.RegisterActivity;
 import com.example.workshop.databinding.LoginBinding;
@@ -56,8 +57,16 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void onLoginSuccess() {        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+    public void onLoginSuccess() {
+        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    @Override
+    public void adminLogin(){
+        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
         startActivity(intent);
         finish();
     }

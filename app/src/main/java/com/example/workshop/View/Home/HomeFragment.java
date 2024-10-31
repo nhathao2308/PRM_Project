@@ -27,7 +27,7 @@ public class HomeFragment extends Fragment implements IHomeView {
     private WorkshopAdapter workshopAdapter;
     private WorkshopPresenter presenter;
     private FirebaseApp app;
-        @Nullable
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -43,9 +43,6 @@ public class HomeFragment extends Fragment implements IHomeView {
         presenter.fetchAllWorkshops();
         return view;
     }
-
-
-
 
     @Override
     public void displayWorkshops(List<Workshop> workshops) {

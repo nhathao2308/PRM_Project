@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.workshop"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -70,13 +70,16 @@ dependencies {
     implementation(libs.firebase.auth) // Firebase Authentication
     implementation(libs.google.services) // Google Services
     implementation(libs.play.services.safetynet) // Play Services SafetyNet
-    implementation (libs.google.recaptcha)
+    implementation(libs.google.recaptcha)
 
     // Firebase App Check with Play Integrity
     implementation(libs.firebase.appcheck.playintegrity)
 
     // Glide for image loading
     implementation(libs.glide)
+    implementation(libs.ext.junit)
+    implementation(libs.recyclerview)
+    implementation(libs.firebase.inappmessaging)
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.junit.junit)
     annotationProcessor(libs.compiler)
@@ -86,8 +89,12 @@ dependencies {
 
     // Kotlin Coroutines for Android (works for Java too)
     implementation(libs.kotlinx.coroutines.android)
-    implementation (libs.play.services.base)
+    implementation(libs.play.services.base)
 
     // Firebase Storage
+    implementation("com.google.mlkit:face-detection:16.1.7")
     implementation(libs.firebase.storage)
+
+    // ML Kit Face Detection
+    // Correct dependency for Face Detection
 }

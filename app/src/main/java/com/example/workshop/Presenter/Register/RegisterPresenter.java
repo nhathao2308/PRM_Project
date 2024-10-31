@@ -1,5 +1,6 @@
 package com.example.workshop.Presenter.Register;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -7,65 +8,36 @@ import androidx.annotation.NonNull;
 import com.example.workshop.View.Register.IRegisterView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.appcheck.FirebaseAppCheck;
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.util.regex.Pattern;
+import java.io.ByteArrayOutputStream;
 
 public class RegisterPresenter implements IRegisterPresenter {
     private final IRegisterView registerView;
     private final FirebaseAuth auth;
+    private final FirebaseStorage storage;
 
     public RegisterPresenter(IRegisterView registerView) {
         this.registerView = registerView;
         this.auth = FirebaseAuth.getInstance();
-
-        // Initialize Firebase App Check with the provider you want (SafetyNet or PlayIntegrity)
-        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-        firebaseAppCheck.installAppCheckProviderFactory(
-                PlayIntegrityAppCheckProviderFactory.getInstance() // Use this for Play Integrity
-                // SafetyNetAppCheckProviderFactory.getInstance()  // Uncomment this if you're using SafetyNet
-        );
+        this.storage = FirebaseStorage.getInstance();
     }
 
-    public void onRegisterClicked(String email, String password) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-
-        // Validate email and password
-        if (email.isEmpty() || password.isEmpty()) {
-            registerView.showErrorMessage("Email or password cannot be empty");
-            return;
-        }
-
-        if (!pattern.matcher(email).matches()) {
-            registerView.showErrorMessage("Email is not valid");
-            return;
-        }
-        if (password.length() < 8) {
-            registerView.showErrorMessage("Password must be at least 8 characters");
-            return;
-        }
-
-        // At this point, Firebase App Check will automatically verify the device using reCAPTCHA or Play Integrity
-        // We now proceed with creating the user
-        createUser(email, password);
+    public void onRegisterClicked(String email, String password, Bitmap faceBitmap) {
+        createUser(email, password, faceBitmap);
     }
 
-    @Override
-    public void onLoginBackClicked() {
-        registerView.navigateToLogin();
-    }
-
-    private void createUser(String email, String password) {
+    private void createUser(String email, String password, Bitmap faceBitmap) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("FirebaseAuth", "User registration successful");
+                            saveFaceImage(faceBitmap, task.getResult().getUser().getUid());
                             registerView.onRegisterSuccess(); // Notify success
                         } else {
                             Log.e("FirebaseAuth", "Error creating user: ", task.getException());
@@ -73,5 +45,31 @@ public class RegisterPresenter implements IRegisterPresenter {
                         }
                     }
                 });
+    }
+
+    private void saveFaceImage(Bitmap faceBitmap, String userId) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        faceBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        StorageReference faceImageRef = storage.getReference().child("faceImages/" + userId + ".png");
+
+        faceImageRef.putBytes(data)
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.d("FirebaseStorage", "Face image uploaded successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirebaseStorage", "Error uploading face image: ", e);
+                });
+    }
+
+    @Override
+    public void onRegisterClicked(String email, String password) {
+
+    }
+
+    @Override
+    public void onLoginBackClicked() {
+        registerView.navigateToLogin();
     }
 }

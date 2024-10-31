@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/primary"
+    android:background="@color/primary"
+    android:id="@+id/activity_update_workshop"
+    >
+
+    <LinearLayout
+        android:padding="20dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/cinzel_decorative"
+            android:text="Update Workshop"
+            android:textColor="@color/darkbrown"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Name"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginRight="20dp"
+
+                />
+            <EditText
+                android:id="@+id/edit_text_name"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:hint="Workshop Name"
+                android:background="@drawable/editext_bg"
+                android:layout_marginVertical="10dp"
+                />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Location"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+
+            />
+        <EditText
+            android:id="@+id/edit_text_location"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="Location"
+            android:background="@drawable/editext_bg"
+            android:layout_marginVertical="10dp"
+
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Price"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+
+            />
+        <EditText
+            android:id="@+id/edit_text_price"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="Price"
+            android:background="@drawable/editext_bg"
+            android:layout_marginVertical="10dp"
+
+            />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textViewStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Date"
+                android:layout_marginRight="20dp"
+                android:paddingTop="16dp"/>
+
+            <Button
+                android:id="@+id/buttonSelectStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Start Date"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textViewEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"            android:text="End Date"
+                android:paddingTop="16dp"/>
+
+            <Button
+                android:id="@+id/buttonSelectEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select End Date"/>
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Description"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+
+            />
+        <EditText
+            android:id="@+id/edit_text_description"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:background="@drawable/editext_bg"
+            android:layout_marginVertical="10dp"
+
+            />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Image"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginRight="20dp"
+
+                />
+
+            <Button
+                android:id="@+id/buttonUploadImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Image"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="20dp"
+                />
+        </LinearLayout>
+        <EditText
+            android:background="@color/white"
+            android:id="@+id/textViewImageUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Image URL"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:enabled="false"
+            android:layout_marginTop="10dp"
+            />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Capacity"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+
+            />
+        <EditText
+            android:id="@+id/edit_text_capacity"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="Capacity"
+            android:background="@drawable/editext_bg"
+            android:layout_marginVertical="10dp"
+
+
+            />
+    </LinearLayout>
+        <Button
+            android:id="@+id/button_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/darkbrown"
+            android:gravity="center"
+            android:paddingLeft="70dp"
+            android:paddingTop="15dp"
+            android:paddingRight="70dp"
+            android:paddingBottom="15dp"/>
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+
